@@ -1,6 +1,7 @@
 public class Main {
     public static void main(String[] args) {
         System.out.println("Проверим заполнение по умолчанию: ");
+        System.out.println();
         Employee ivan = new Employee();
         ivan.getEmployee();
         System.out.println();
