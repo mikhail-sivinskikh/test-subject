@@ -11,27 +11,6 @@ public class Client {
     private static BufferedReader in;
     private static BufferedReader reader;
 
-
-
-    public static class outputMsg implements Runnable {
-
-        @Override
-        public void run() {
-            try {
-                String output = reader.readLine();
-                if (output.equalsIgnoreCase("end")) {
-                    System.out.println("You ended the conversation!");
-                    clientSocket.close();
-                    in.close();
-                    out.close();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public static void main(String[] args) {
         try {
             try {
@@ -40,54 +19,66 @@ public class Client {
                 reader = new BufferedReader(new InputStreamReader(System.in));
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+//
+//                Thread inputMs = new Thread(() -> {
+//                    try {
+//                        while (true) {
+//                            if (in.ready()) {
+//                                String message = in.readLine();
+//                                System.out.println("Client: " + message);
+//                                if (in.readLine().equalsIgnoreCase("exit")){
+//                                    break;
+//                                }
+//                            }
+//                            Thread.sleep(300);
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+//
+//                Thread outputMs = new Thread(() -> {
+//                    try {
+//                        while (true) {
+//                            if (reader.ready()) {
+//                                String message = reader.readLine();
+//                                if (!message.equalsIgnoreCase("exit")) {
+//                                    out.write(message);
+//                                    System.out.println("You: " + message);
+//                                    out.flush();
+//                                }
+//                                break;
+//                            }
+//                            Thread.sleep(300);
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+//                System.out.println("Chat started!");
+//                inputMs.start();
+//                outputMs.start();
 
-                Thread inputMs = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String input = in.readLine();
-                            System.out.println(input);
-                            if (input.equalsIgnoreCase("end")) {
-                                System.out.println("Server ended the conversation!");
-                                clientSocket.close();
-                                in.close();
-                                out.close();
-                            }
-                            if (!input.isEmpty()) {
-                                System.out.println("new Message! \n" + input);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                while (true) {
+                    System.out.println(123);
+                    if (reader.ready()) {
+                        String message = reader.readLine();
+                        if (message.equalsIgnoreCase("exit")) {
+                            break;
+                        }else{
+                        out.write(message);
+                        System.out.println("You: " + message);
+                        out.flush();
                         }
                     }
-                });
-
-                Thread outputMs = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String output = reader.readLine();
-                            out.write(output + "\n");
-                            System.out.println(output);
-                            if (output.equalsIgnoreCase("end")) {
-                                System.out.println("You ended the conversation!");
-                                clientSocket.close();
-                                in.close();
-                                out.close();
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    if (in.ready()) {
+                        System.out.println("we are here");
+                        String incomingMessage = in.readLine();
+                        System.out.println("Server: " + incomingMessage);
                     }
-                });
-                if (clientSocket.isConnected()) {
-                    inputMs.start();
-                    outputMs.start();
-                } else {
-                    inputMs.wait(100);
-                    outputMs.wait(100);
+                    Thread.sleep(500);
                 }
+
             } finally {
                 System.out.println("Client terminated");
                 clientSocket.close();
