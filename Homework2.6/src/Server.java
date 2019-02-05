@@ -27,62 +27,23 @@ public class Server {
                     serverOut = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                     serverReader = new BufferedReader(new InputStreamReader(System.in));
 
-//                    Thread inputMs = new Thread(() -> {
-//                        try {
-//                            while (true) {
-//                                if (serverIncoming.ready()) {
-//                                    String message = serverIncoming.readLine();
-//                                    System.out.println("Client: " + message);
-//                                    if (serverIncoming.readLine().equalsIgnoreCase("exit")) {
-//                                        break;
-//                                    }
-//                                }
-//                                Thread.sleep(300);
-//                            }
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    });
-//
-//                    Thread outputMs = new Thread(() -> {
-//                        try {
-//                            while (true) {
-//                                if (serverReader.ready()) {
-//                                    String message = serverReader.readLine();
-//                                    if (!message.equalsIgnoreCase("exit")) {
-//                                        out.write(message);
-//                                        System.out.println("You: " + message);
-//                                        out.flush();
-//                                    }
-//                                    break;
-//                                }
-//                                Thread.sleep(300);
-//                            }
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    });
-//                    System.out.println("Chat started!");
-//                    inputMs.start();
-//                    outputMs.start();
-
+                    System.out.println("Chat started!");
                     while (true) {
-                        System.out.println(123);
                         if (serverReader.ready()) {
                             String message = serverReader.readLine();
                             if (message.equalsIgnoreCase("exit")) {
+                                serverOut.write(message + "\n");
                                 break;
                             }else{
-                                serverOut.write(message);
+                                serverOut.write(message + "\n");
                                 System.out.println("You: " + message);
                                 serverOut.flush();
                             }
                         }
                         if (serverIncoming.ready()) {
-                            System.out.println("Server: " + serverIncoming.readLine());
-                            serverIncoming.reset();
+                            System.out.println("Client: " + serverIncoming.readLine());
                         }
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                     }
                 } finally {
                     socket.close();
