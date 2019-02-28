@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">Homework Android 1 lesson 1</string>
+    <string name="weather">Weather</string>
+</resources>
